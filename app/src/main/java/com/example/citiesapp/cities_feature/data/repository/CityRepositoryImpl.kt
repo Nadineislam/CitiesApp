@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.flow
 import java.io.InputStreamReader
 import javax.inject.Inject
 
-class CityRepositoryImpl  @Inject constructor(
+class CityRepositoryImpl @Inject constructor(
     private val context: Context
 ) : CityRepository {
 
