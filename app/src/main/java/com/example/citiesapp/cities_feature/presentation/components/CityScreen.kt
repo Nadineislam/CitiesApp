@@ -13,9 +13,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,38 +34,54 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.citiesapp.cities_feature.data.models.City
 import com.example.citiesapp.cities_feature.presentation.viewmodel.CityViewModel
 import com.example.citiesapp.core.utils.Resource
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalCoroutinesApi::class)
 @Composable
 fun CityListScreen(viewModel: CityViewModel, onCityClick: (City) -> Unit) {
-    val citiesState by viewModel.cities.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    var searchQuery by remember { mutableStateOf("") }
+    val citiesState by viewModel.filteredCities.collectAsStateWithLifecycle()
 
-    when (citiesState) {
-        is Resource.Loading -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
+
+    LaunchedEffect(searchQuery) {
+        viewModel.onSearchQueryChanged(searchQuery)
+    }
+    Column {
+        TextField(
+            value = searchQuery,
+            onValueChange = { searchQuery = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            placeholder = { Text("Search cities...") }
+        )
+
+        when (citiesState) {
+            is Resource.Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
             }
-        }
 
-        is Resource.Error -> {
-            Toast.makeText(
-                context,
-                "Failed to load cities: ${citiesState.message}",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
+            is Resource.Error -> {
+                Toast.makeText(
+                    context,
+                    "Failed to load cities: ${(citiesState as Resource.Error).message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
 
-        is Resource.Success -> {
-            val cities = (citiesState as Resource.Success<List<City>>).data
-            val nonNullCities = cities ?: emptyList()
-            LazyColumn {
-                items(nonNullCities) { city ->
-                    CityItem(city) { clickedCity ->
-                        onCityClick(clickedCity)
+            is Resource.Success -> {
+                val cities = (citiesState as Resource.Success<List<City>>).data
+                val nonNullCities = cities ?: emptyList()
+                LazyColumn {
+                    items(nonNullCities) { city ->
+                        CityItem(city, onCityClick)
                     }
                 }
             }
@@ -67,14 +89,15 @@ fun CityListScreen(viewModel: CityViewModel, onCityClick: (City) -> Unit) {
     }
 }
 
+
 @Composable
-fun CityItem(city: City, onClick: (City) -> Unit) {
+fun CityItem(city: City, onCityClick: (City) -> Unit) {
     Card(
         modifier = Modifier
             .padding(vertical = 8.dp, horizontal = 14.dp)
             .fillMaxWidth()
             .clickable {
-                onClick(city)
+                onCityClick(city)
             },
         border = BorderStroke(0.1.dp, Color.Gray),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
