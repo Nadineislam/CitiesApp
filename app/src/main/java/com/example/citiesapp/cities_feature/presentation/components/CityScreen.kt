@@ -2,6 +2,7 @@ package com.example.citiesapp.cities_feature.presentation.components
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,8 +29,9 @@ import com.example.citiesapp.cities_feature.data.models.City
 import com.example.citiesapp.cities_feature.presentation.viewmodel.CityViewModel
 import com.example.citiesapp.core.utils.Resource
 
+
 @Composable
-fun CityListScreen(viewModel: CityViewModel) {
+fun CityListScreen(viewModel: CityViewModel, onCityClick: (City) -> Unit) {
     val citiesState by viewModel.cities.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
@@ -42,30 +44,38 @@ fun CityListScreen(viewModel: CityViewModel) {
                 CircularProgressIndicator()
             }
         }
+
         is Resource.Error -> {
-         Toast.makeText(context, "Failed to load cities: ${citiesState.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                "Failed to load cities: ${citiesState.message}",
+                Toast.LENGTH_SHORT
+            ).show()
         }
+
         is Resource.Success -> {
             val cities = (citiesState as Resource.Success<List<City>>).data
             val nonNullCities = cities ?: emptyList()
-                    LazyColumn {
-                        items(nonNullCities) { city ->
-                            CityItem(city)
-                        }
+            LazyColumn {
+                items(nonNullCities) { city ->
+                    CityItem(city) { clickedCity ->
+                        onCityClick(clickedCity)
                     }
-
-
+                }
+            }
         }
     }
 }
 
-
 @Composable
-fun CityItem(city: City) {
+fun CityItem(city: City, onClick: (City) -> Unit) {
     Card(
         modifier = Modifier
             .padding(vertical = 8.dp, horizontal = 14.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .clickable {
+                onClick(city)
+            },
         border = BorderStroke(0.1.dp, Color.Gray),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
@@ -82,8 +92,8 @@ fun CityItem(city: City) {
                 )
             )
             Text(
-                text = "Coordinates: ${city.coordinates.lat}, ${city.coordinates.lon}",
-                style= TextStyle(
+                text = "Coordinates: ${city.coordinates.latitude}, ${city.coordinates.longitude}",
+                style = TextStyle(
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.Gray

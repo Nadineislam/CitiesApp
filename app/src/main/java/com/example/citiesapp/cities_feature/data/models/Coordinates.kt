@@ -1,6 +1,10 @@
 package com.example.citiesapp.cities_feature.data.models
 
+import com.google.gson.annotations.SerializedName
+
 data class Coordinates(
-    val lon: Double,
-    val lat: Double
+    @SerializedName("lon")
+    val longitude: Double,
+    @SerializedName("lat")
+    val latitude: Double
 )

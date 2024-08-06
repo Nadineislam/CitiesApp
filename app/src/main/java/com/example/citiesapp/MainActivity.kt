@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import com.example.citiesapp.cities_feature.presentation.components.CityListScreen
+import com.example.citiesapp.cities_feature.presentation.components.NavigationGraph
 import com.example.citiesapp.cities_feature.presentation.viewmodel.CityViewModel
 import com.example.citiesapp.ui.theme.CitiesAppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             CitiesAppTheme {
-                CityListScreen(viewModel)
+                NavigationGraph(viewModel = viewModel)
             }
         }
     }
