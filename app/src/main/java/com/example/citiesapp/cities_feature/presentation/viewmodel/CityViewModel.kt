@@ -25,15 +25,13 @@ class CityViewModel @Inject constructor(
 
     private val _cities = cityUseCase().map { cities ->
         Resource.Success(cities) as Resource<List<City>>
-    }
-        .catch { e ->
-            emit(Resource.Error("Failed to load cities: ${e.message}"))
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Eagerly,
-            initialValue = Resource.Loading()
-        )
+    }.catch { e ->
+        emit(Resource.Error("Failed to load cities: ${e.message}"))
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = Resource.Loading()
+    )
 
     val filteredCities = combine(_searchQuery, _cities) { query, resource ->
         when (resource) {

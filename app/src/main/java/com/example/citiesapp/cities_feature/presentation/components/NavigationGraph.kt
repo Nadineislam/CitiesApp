@@ -9,7 +9,9 @@ import com.example.citiesapp.cities_feature.data.models.City
 import com.example.citiesapp.cities_feature.data.models.Coordinates
 import com.example.citiesapp.cities_feature.presentation.viewmodel.CityViewModel
 import com.example.citiesapp.core.utils.openCityInGoogleMaps
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalCoroutinesApi
 @Composable
 fun NavigationGraph(viewModel: CityViewModel) {
     val context = LocalContext.current
