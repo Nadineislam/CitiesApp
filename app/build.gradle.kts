@@ -21,7 +21,10 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        buildConfigField ("String", "GOOGLE_MAPS_API_KEY", "\"AIzaSyA46DOJoRfQD3bGsZy-C5RQXcW5Qv_bhk8\"")
+
     }
+
 
     buildTypes {
         release {
@@ -31,7 +34,15 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug {
+            resValue ("string", "google_maps_api_key", "\"AIzaSyA46DOJoRfQD3bGsZy-C5RQXcW5Qv_bhk8\"")
+        }
+        release {
+            resValue ("string", "google_maps_api_key", "\"AIzaSyA46DOJoRfQD3bGsZy-C5RQXcW5Qv_bhk8\"")
+        }
     }
+
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -41,6 +52,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
