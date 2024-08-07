@@ -8,8 +8,8 @@ import javax.inject.Inject
 
 class CityUseCase @Inject constructor(
     private val repository: CityRepository
-) {
-     operator fun invoke(): Flow<List<City>> =
+) : ICityUseCase {
+    override operator fun invoke(): Flow<List<City>> =
         repository.getCities().map { resource ->
             resource.data?.sortedBy { it.name } ?: emptyList()
         }
