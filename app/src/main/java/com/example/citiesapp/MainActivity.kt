@@ -8,7 +8,9 @@ import com.example.citiesapp.cities_feature.presentation.components.NavigationGr
 import com.example.citiesapp.cities_feature.presentation.viewmodel.CityViewModel
 import com.example.citiesapp.ui.theme.CitiesAppTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel: CityViewModel by viewModels()

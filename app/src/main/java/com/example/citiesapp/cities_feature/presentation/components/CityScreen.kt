@@ -78,9 +78,8 @@ fun CityListScreen(viewModel: CityViewModel, onCityClick: (City) -> Unit) {
 
             is Resource.Success -> {
                 val cities = (citiesState as Resource.Success<List<City>>).data
-                val nonNullCities = cities ?: emptyList()
                 LazyColumn {
-                    items(nonNullCities) { city ->
+                    items(cities ?: emptyList()) { city ->
                         CityItem(city, onCityClick)
                     }
                 }

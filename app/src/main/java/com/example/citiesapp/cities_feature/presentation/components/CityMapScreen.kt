@@ -34,7 +34,12 @@ fun CityMapScreen(city: City) {
         )
     ) {
         Marker(
-            state = MarkerState(position = LatLng(city.coordinates.latitude, city.coordinates.longitude)),
+            state = MarkerState(
+                position = LatLng(
+                    city.coordinates.latitude,
+                    city.coordinates.longitude
+                )
+            ),
             title = city.name
         )
     }
