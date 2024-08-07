@@ -6,8 +6,10 @@ import com.example.citiesapp.cities_feature.domain.repository.CityRepository
 import com.example.citiesapp.core.utils.Resource
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 import java.io.InputStreamReader
 import javax.inject.Inject
 
@@ -18,10 +20,12 @@ class CityRepositoryImpl @Inject constructor(
     override fun getCities(): Flow<Resource<List<City>>> = flow {
         emit(Resource.Loading())
         try {
-            val cities = context.assets.open("cities.json").use { inputStream ->
-                val reader = InputStreamReader(inputStream)
-                val listType = object : TypeToken<List<City>>() {}.type
-                Gson().fromJson<List<City>>(reader, listType)
+            val cities = withContext(Dispatchers.IO) {
+                context.assets.open("cities.json").use { inputStream ->
+                    val reader = InputStreamReader(inputStream)
+                    val listType = object : TypeToken<List<City>>() {}.type
+                    Gson().fromJson<List<City>>(reader, listType)
+                }
             }
             emit(Resource.Success(cities))
         } catch (e: Exception) {
